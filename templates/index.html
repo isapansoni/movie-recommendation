@@ -1,0 +1,148 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.js"></script>
+
+</head>
+
+     
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>recomandation system</title>
+</head>
+<body>
+    
+
+
+<html>
+
+<body>
+
+    <nav class="navbar navbar-dark bg-info">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/">Movie Recomandation </a>
+        </div>
+    </nav>
+    <div class="container card" >
+        <div class="row card-body" style='margin: 1% 4% 1% 4%;'>
+          <div class="col ">
+            <div class="input-group mb-3">
+                <input id='movie_name'placeholder="Enter Movie Name e.g 'Iron Man'" type="text" class="form-control ">
+              </div>
+          </div>
+          <div class="col">
+            <div class="btn-group" role="group" >
+                
+                <button type="button" class="btn btn-outline-success">Submit</button>
+              </div>
+          </div>
+    </div>
+
+    <div id="myGrid" style="height: 550px; width:90%;" class="ag-theme-alpine"></div>
+
+    </div>
+
+    
+    
+</body>
+
+  <!-- Modal -->
+  <div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered"" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger" >404</h5>
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Opps!! Movie not found in database. Please check spelling or try other movie</p>
+        </div>
+        <div class="modal-footer">
+    
+          <button type="button" class="btn btn-secondary" id='okbtn' data-dismiss="modal">ok!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</html>
+</body>
+</html>
+
+
+
+<script>
+
+const columnDefs = [
+                    { field: "Name",resizable: true ,},
+                    { field: "Genres",resizable: true,width:300 },
+                    { field: "Cast",resizable: true ,width:400},
+                    { field: "Plot",resizable: true,width:380,tooltipField: 'Plot',
+                                                              tooltipComponentParams: { color: '#ececec' }}
+                    ];
+
+
+const gridOptions = {
+            columnDefs: columnDefs,
+            pagination: true,
+            paginationPageSize:10,
+
+            rowData: []
+            };
+
+const gridDiv = document.querySelector('#myGrid');
+new agGrid.Grid(gridDiv, gridOptions);
+
+
+    
+
+
+$( "button" ).click(function() {
+    gridOptions.api.showLoadingOverlay();
+    var input_movie = $('#movie_name').val();
+    console.log(input_movie)
+    $.ajax({
+        type: "POST",
+        async:true,
+        url: '/get_movie_list/',
+         data: JSON.stringify({input_movie:input_movie}),
+        success: function(data){
+            j_data = JSON.parse(data)
+           const rowData = j_data['recommanded_movies']
+           console.log(rowData)
+           gridOptions.api.setRowData(rowData)
+        },
+        error: function (data) {
+        //alert('Opps! Movie not found in list , please enter other movie or check spelling')
+        $('.modal').modal('show')
+    }
+});
+
+$('#okbtn').click(function(){
+    $('.modal').modal('hide')
+    gridOptions.api.hideOverlay();
+})
+
+
+});
+</script>
+
+
+<style>
+
+#myGrid {
+
+    margin: 1% 4% 1% 4%;
+
+}
+
+</style>
