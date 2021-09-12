@@ -13,7 +13,9 @@ trying to create a website with flask which recommand movie to user
 Web page is built using below
 
 1)Flask
+
 2)Bootstrap
+
 3)Ag-grid
 
 This repo is inspired from below repo
